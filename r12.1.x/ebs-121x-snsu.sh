@@ -1,6 +1,6 @@
 #!/bin/bash
 #-----------------------------------------------------------------------------------------------------------#
-# Startup/Shutdown Utility Script for Oracle E-Business Suite 12.1.X                                        #
+# Startup/Shutdown Utility Script for Oracle E-Business Suite 12.1.x                                        #
 # This script is licenced under GPLv2 ; you can get your copy from http://www.gnu.org/licenses/gpl-2.0.html #
 # (C) Omkar Dhekne ; ogdhekne@yahoo.in                                                                      #
 # This script requires 'dialog' package installed in system. To check # rpm -qa  | grep dialog              #
@@ -93,7 +93,7 @@ while true
 do
 
 # -- MAIN MENU:
-dialog --clear --backtitle "STARTUP/SHUTDOWN UTILITY FOR EBS 12.1.X " \
+dialog --clear --backtitle "STARTUP/SHUTDOWN UTILITY FOR EBS 12.1.x " \
 --title "[ M A I N - M E N U ]" \
 --menu "               NOTE: USE ARROW KEYS TO NAVIGATE" 15 68 4	 \
 Startup "Start DB & APPS Services." \
