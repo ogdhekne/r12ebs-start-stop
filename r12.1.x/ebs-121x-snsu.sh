@@ -7,12 +7,6 @@
 # * IMPORTANT: Set BASE, SID, HOST  before running script.                                                  #
 #-----------------------------------------------------------------------------------------------------------#
 
-# -- STORE MENU OPTIONS SELECTED BY USER:
-	INPUT=$HOME/.menu.sh.$$
-
-# -- TRAP AND DELETE TEMP FILES:
-	trap "rm $INPUT; exit" SIGHUP SIGINT SIGTERM
-
 # -- ENV:
 	export BASE=""
 	export SID=""
@@ -28,91 +22,83 @@
     export APP="$(ps -ef | grep FND | wc -l)"
 
 # -- FUNC:
+	start()
+	{
 
-start()
-{
+	# -- START DB:
+		source $BASE/db/tech_st/11.1.0/$SID\_$HOST.env
 
-# -- START DB:
-	source $BASE/db/tech_st/11.1.0/$SID\_$HOST.env
+		$BASE/db/tech_st/11.1.0/appsutil/scripts/$SID\_$HOST/addlnctl.sh start $SID
+		$BASE/db/tech_st/11.1.0/appsutil/scripts/$SID\_$HOST/addbctl.sh start
 
-	$BASE/db/tech_st/11.1.0/appsutil/scripts/$SID\_$HOST/addlnctl.sh start $SID
-	$BASE/db/tech_st/11.1.0/appsutil/scripts/$SID\_$HOST/addbctl.sh start
+	# -- START APPS:
+		source $BASE/apps/apps_st/appl/APPS$SID\_$HOST.env
 
-# -- START APPS:
-	source $BASE/apps/apps_st/appl/APPS$SID\_$HOST.env
+		$BASE/inst/apps/$SID\_$HOST/admin/scripts/adstrtal.sh apps/apps
 
-	$BASE/inst/apps/$SID\_$HOST/admin/scripts/adstrtal.sh apps/apps
+	# -- PRINT MESSAGE:
+		echo "                                           "
+		echo -e "Press ${GRAY:-} [Enter] ${RESET:-} to exit."
+		read enter
+	}
 
-# -- PRINT MESSAGE:
-	echo "                                           "
-	echo -e "Press ${GRAY:-} [Enter] ${RESET:-} to return main-menu."
-	read enter
-}
+	stop()
+	{
 
-stop()
-{
+	# -- STOP APPS:
+		source $BASE/apps/apps_st/appl/APPS$SID\_$HOST.env
 
-# -- STOP APPS:
-	source $BASE/apps/apps_st/appl/APPS$SID\_$HOST.env
+		$BASE/inst/apps/$SID\_$HOST/admin/scripts/adstpall.sh apps/apps
 
-	$BASE/inst/apps/$SID\_$HOST/admin/scripts/adstpall.sh apps/apps
+	# -- STOP DB:
+		source $BASE/db/tech_st/11.1.0/$SID\_$HOST.env
 
-# -- STOP DB:
-	source $BASE/db/tech_st/11.1.0/$SID\_$HOST.env
+		$BASE/db/tech_st/11.1.0/appsutil/scripts/$SID\_$HOST/addlnctl.sh stop $SID
+		$BASE/db/tech_st/11.1.0/appsutil/scripts/$SID\_$HOST/addbctl.sh stop immediate
 
-	$BASE/db/tech_st/11.1.0/appsutil/scripts/$SID\_$HOST/addlnctl.sh stop $SID
-	$BASE/db/tech_st/11.1.0/appsutil/scripts/$SID\_$HOST/addbctl.sh stop immediate
+	# -- PRINT MESSAGE:
+		echo "                                           "
+		echo -e "Press ${GRAY:-} [Enter] ${RESET:-} to exit."
+		read enter
 
-# -- PRINT MESSAGE:
-	echo "                                           "
-	echo -e "Press ${GRAY:-} [Enter] ${RESET:-} to return main-menu."
-	read enter
+	}
 
-}
-
-status()
-{
-    echo "                                           "
-# -- PRINT STATUS OF DB, APPS & LISNTENER
-    cat <<EOF
-    Processes:
-    DB: $DB   APPS: $APP  LISTENER: $LISTN
+	status()
+	{
+		echo "                                           "
+		# -- PRINT STATUS OF DB, APPS & LISNTENER
+			cat <<EOF
+			Processes:
+			DB: $DB   APPS: $APP  LISTENER: $LISTN
 EOF
 
-# -- PRINT MESSAGE:
-	echo "                                           "
-	echo -e "Press ${GRAY:-} [Enter] ${RESET:-} to return main-menu."
-	read enter
 
-}
+		# -- PRINT MESSAGE:
+			echo "                                           "
+			echo -e "Press ${GRAY:-} [Enter] ${RESET:-} to return main-menu."
+			read enter
 
+	}
 
-# -- SET INFINITE LOOP:
-
-while true
-do
 
 # -- MAIN MENU:
-dialog --clear --backtitle "STARTUP/SHUTDOWN UTILITY FOR EBS 12.1.x " \
---title "[ M A I N - M E N U ]" \
---menu "               NOTE: USE ARROW KEYS TO NAVIGATE" 15 68 4	 \
-Startup "Start DB & APPS Services." \
-Shutdown "Stop APPS & DB Services." \
-Status "Status of DB, APPS & LISTENER." \
-Exit "Exit to the shell" 2>"${INPUT}"
+	menu=(dialog --clear --backtitle "STARTUP/SHUTDOWN UTILITY FOR EBS 12.1.x " --title "[ M A I N - M E N U ]" \
+		--menu "               NOTE: USE ARROW KEYS TO NAVIGATE" 15 68 4)
 
-menuitem=$(<"${INPUT}")
+	options=(Startup	"Start DB & APPS Services."
+			Shutdown	"Stop APPS & DB Services."
+			Status		"Status of DB, APPS & LISTENER."
+			Exit		"Exit to the shell")
 
 
-# -- MAKE DESCISION:
-case $menuitem in
-	Startup) start;;
-	Shutdown) stop;;
-	Status) status;;
-	Exit) echo "Bye"; break;;
-esac
+	choices=$("${menu[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
-done
-
-# -- IF TEMP FILES FOUND, DELETE THEM:
-	[ -f $INPUT ] && rm $INPUT
+	for choice in $choices
+	do
+		case $choice in
+			Startup) clear && start ;;
+			Shutdown) clear && stop ;;
+			Status) clear && status ;;
+			Exit) clear && echo "Bye"; break;;
+		esac
+	done
