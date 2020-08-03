@@ -1,6 +1,6 @@
 #!/bin/bash
 #-----------------------------------------------------------------------------------------------------------#
-# Startup/Shutdown Utility Script for Oracle E-Business Suite 12.2.x (Individual services)                  #
+# Startup/Shutdown Utility Script for Oracle E-Business Suite 12.2.x (Individual service - start/stop)      #
 # This script is licenced under GPLv2 ; you can get your copy from http://www.gnu.org/licenses/gpl-2.0.html #
 # (C) Omkar Dhekne ; ogdhekne@yahoo.in                                                                      #
 # Note: A_PASS: PASSWORD FOR APPS SCHEMA ; W_PASS: WEBLOGIC SERVER PASSWORD                                 #
