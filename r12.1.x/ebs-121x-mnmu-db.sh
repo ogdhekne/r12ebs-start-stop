@@ -17,9 +17,9 @@
 	export GRAY="\e[100m"
 
 # -- PROCESSES:
-    export LISTN="$(ps -ef |  grep tns | grep 11.2.0 | wc -l)"
-    export DB="$(ps -ef | grep ora_ | grep $SID | wc -l)"
-    export APP="$(ps -ef | grep FND | wc -l)"
+    export LISTN="$(ps -ef |  grep tns | grep 11.2.0 | sed '$ d' | wc -l)"
+    export DB="$(ps -ef | grep ora_ | grep $SID | sed '$ d' | wc -l)"
+    export APP="$(ps -ef | grep FND | sed '$ d' | wc -l)"
 
 # -- FUNC:
 
