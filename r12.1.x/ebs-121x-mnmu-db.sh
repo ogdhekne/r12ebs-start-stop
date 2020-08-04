@@ -19,7 +19,6 @@
 # -- PROCESSES:
     export LISTN="$(ps -ef |  grep tns | grep 11.2.0 | sed '$ d' | wc -l)"
     export DB="$(ps -ef | grep ora_ | grep $SID | sed '$ d' | wc -l)"
-    export APP="$(ps -ef | grep FND | sed '$ d' | wc -l)"
 
 # -- FUNC:
 
@@ -59,8 +58,7 @@
 		echo "                                           "
 	# -- PRINT STATUS OF DB, APPS & LISNTENER
 		cat <<EOF
-		Processes:
-		DB: $DB   APPS: $APP  LISTENER: $LISTN
+		Processes: DB: $DB  LISTENER: $LISTN
 EOF
 
 	# -- PRINT MESSAGE:

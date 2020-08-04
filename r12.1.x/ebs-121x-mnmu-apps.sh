@@ -17,8 +17,6 @@
 	export GRAY="\e[100m"
 
 # -- PROCESSES:
-    export LISTN="$(ps -ef |  grep tns | grep 11.2.0 | sed '$ d' | wc -l)"
-    export DB="$(ps -ef | grep ora_ | grep $SID | sed '$ d' | wc -l)"
     export APP="$(ps -ef | grep FND | sed '$ d' | wc -l)"
 
 # -- FUNC:
@@ -58,8 +56,7 @@
 		echo "                                           "
 	# -- PRINT STATUS OF DB, APPS & LISNTENER
 		cat <<EOF
-		Processes:
-		DB: $DB   APPS: $APP  LISTENER: $LISTN
+		Processes: APPS: $APP
 EOF
 
 	# -- PRINT MESSAGE:
@@ -69,44 +66,13 @@ EOF
 
 	}
 
-
-# -- SET INFINITE LOOP:
-
-while true
-do
-
-# -- MAIN MENU:
-dialog --clear --backtitle "STARTUP/SHUTDOWN UTILITY FOR EBS 12.1.x " \
---title "[ M A I N - M E N U ]" \
---menu "               NOTE: USE ARROW KEYS TO NAVIGATE" 15 68 4	 \
-Startup "Start APPS Services." \
-Shutdown "Stop APPS Services." \
-Status "Status of DB, APPS & LISTENER." \
-Exit "Exit to the shell" 2>"${INPUT}"
-
-menuitem=$(<"${INPUT}")
-
-
-# -- MAKE DESCISION:
-case $menuitem in
-	Startup) start;;
-	Shutdown) stop;;
-	Status) status;;
-	Exit) echo "Bye"; break;;
-esac
-
-done
-
-# -- IF TEMP FILES FOUND, DELETE THEM:
-	[ -f $INPUT ] && rm $INPUT
-
 # -- MAIN MENU:
 	menu=(dialog --clear --backtitle "STARTUP/SHUTDOWN UTILITY FOR EBS 12.1.x " --title "[ M A I N - M E N U ]" \
 		--menu "               NOTE: USE ARROW KEYS TO NAVIGATE" 15 68 4)
 
-	options=(Startup	"Start DB Services."
-			Shutdown	"Stop DB Services."
-			Status		"Status of DB & LISTENER."
+	options=(Startup	"Start APPS Services."
+			Shutdown	"Stop APPS Services."
+			Status		"Status of APPS"
 			Exit		"Exit to the shell")
 
 
